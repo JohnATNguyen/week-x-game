@@ -33,7 +33,6 @@ function main() {
 			attackPower: Math.floor(Math.random() * 20) + 1
 		}
 	]
-	console.log(people);
 	var characterBootstrapClass = "characts col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-3";
 	var canPickAttacker = true;
 	var canPickDefender = true;
@@ -61,17 +60,15 @@ function main() {
 	// user clicks a character
 	$('.characts').on('click', function() {
 		if (canPickAttacker) {
-			var attackerDiv = $(this);
-			attackerDiv.addClass('attacker');
-			$('#currentcharacter').append(attackerDiv);
+			var attacker = $(this).addClass('attacker');
+			$('#currentcharacter').append(this);
 			canPickAttacker = false;
-			attackerId = $(this).attr('id')
+			attackerid = $(this).attr('id')
 			$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>Please select a defender.</span>');
 		}
-		else if (canPickDefender && $(this).attr('id') != attackerId) {
-			var defenderDiv = $(this);
-			defenderDiv.addClass('defender');
-			$('#currentdefender').append(defenderDiv);
+		else if (canPickDefender && $(this).attr('id') != attackerid) {
+			var defender = $(this).addClass('defender');
+			$('#currentdefender').append(this);
 			canPickDefender = false;
 			$('#attack').prop('disabled', false);
 			$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>Attack the defender!</span>');
