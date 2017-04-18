@@ -1,5 +1,11 @@
+// "* The `Health Points`, `Attack Power` and `Counter Attack Power` of each character must differ."
+
 var wins = 0;
 var losses = 0;
+
+function randomNumber (min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
 
 function main() {
 	// set variables
@@ -8,32 +14,34 @@ function main() {
 			id: "turtles",
 			nameAndAlt: "One of the Turtles",
 			imageLink: "assets/images/Teenage_Mutant_Ninja_Turtles_(Kevin_Eastman's_art).jpg",
-			hitPoints: Math.floor(Math.random() * 200) + 1,
-			attackPower: Math.floor(Math.random() * 5) + 1
+			hitPoints: randomNumber(1, 201),
+			attackPower: randomNumber(1, 6)
 		},
 		splinter = {
 			id: "splinter",
 			nameAndAlt: "Master Splinter",
 			imageLink: "assets/images/Splinter_(David_Petersen's_art).jpg",
-			hitPoints: Math.floor(Math.random() * 150) + 1,
-			attackPower: Math.floor(Math.random() * 15) + 1
+			hitPoints: randomNumber(1, 151),
+			attackPower: randomNumber(1, 16)
 		},
 		april = {
 			id: "april",
 			nameAndAlt: "April O'Neil",
 			imageLink: "assets/images/April_O'Neil_(character).jpg",
-			hitPoints: Math.floor(Math.random() * 175) + 1,
-			attackPower: Math.floor(Math.random() * 10) + 1
+			hitPoints: randomNumber(1, 176),
+			attackPower: randomNumber(1, 11)
 		},
 		shredder = {
 			id: "shredder",
 			nameAndAlt: "The Shredder",
 			imageLink: "assets/images/TMNTShredderComic.jpg",
-			hitPoints: Math.floor(Math.random() * 125) + 1,
-			attackPower: Math.floor(Math.random() * 20) + 1
+			hitPoints: randomNumber(1, 126),
+			attackPower: randomNumber(1, 21)
 		}
 	]
-	console.log(people);
+	for (var i = 0, n = people.length; i < n; i++) {
+		console.log([i] + ': ' + people[i].attackPower);
+	}
 	var characterBootstrapClass = "characts col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-3";
 	var canPickAttacker = true;
 	var canPickDefender = true;
@@ -58,6 +66,7 @@ function main() {
 	$('#winscolumn').html(wins);
 	$('#lossescolumn').html(losses);
 
+	$('.characts').unbind('click');
 	// user clicks a character
 	$('.characts').on('click', function() {
 		if (canPickAttacker) {
@@ -78,28 +87,29 @@ function main() {
 		}
 	});
 
+	$('#attack').unbind('click');
 	$('#attack').on('click', function() {
-		var attackerTotalAttack = parseInt($('.attacker').attr('attackpower')) + parseInt($('.attacker').attr('attackpower')*attackCounter);
-		var defenderhitpoints = $('.defender').attr('hitpoints') - attackerTotalAttack;
-		$('.defender').attr('hitpoints', defenderhitpoints);
-		$('.defender').find('.HP').html('HP (Hit Points): ' + defenderhitpoints);
+		var attackerTotalAttack = parseInt($('.attacker').attr('attackPower')) + parseInt($('.attacker').attr('attackPower')*attackCounter);
+		var defenderHitPoints = $('.defender').attr('hitpoints') - attackerTotalAttack;
+		$('.defender').attr('hitpoints', defenderHitPoints);
+		$('.defender').find('.HP').html('HP (Hit Points): ' + defenderHitPoints);
 		attackCounter++;
-		var defenderTotalAttack = $('.defender').attr('attackpower');
+		var defenderTotalAttack = $('.defender').attr('attackPower'); // coming out as a string sometimes after restart, so undefined happens???
 		console.log(defenderTotalAttack);
-		var attackerhitpoints = $('.attacker').attr('hitpoints') - defenderTotalAttack;
-		console.log(attackerhitpoints);
-		$('.attacker').attr('hitpoints', attackerhitpoints);
-		$('.attacker').find('.HP').html('HP (Hit Points): ' + attackerhitpoints);
+		var attackerHitPoints = $('.attacker').attr('hitpoints') - defenderTotalAttack; // defenderTotalAttack comes out as string at times after restart (right above), so attackerHitPoints (being a mathematical operation) comes out as NaN???
+		console.log(attackerHitPoints);
+		$('.attacker').attr('hitpoints', attackerHitPoints);
+		$('.attacker').find('.HP').html('HP (Hit Points): ' + attackerHitPoints);
 		$('#gameupdates').html('<h3><em>Game Updates: </em></h3>');
 		$('#gameupdates').append('<span>You attacked the defender for ' + attackerTotalAttack + ' hitpoints!<br></span>');
 		$('#gameupdates').append('<span>The defender counterattacked you for ' + defenderTotalAttack + ' hitpoints!</span>');
-		if (attackerhitpoints <= 0) {
+		if (attackerHitPoints <= 0) {
 			losses++;
 			$('#attack').prop('disabled', true);
 			$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>You\'ve lost!</span>');
 			$('#lossescolumn').html(losses);
 		}
-		else if (defenderhitpoints <= 0) {
+		else if (defenderHitPoints <= 0) {
 			$('#currentdefender').html('<h3><em>Current Defender:</em></h3>');
 			canPickDefender = true;
 			defenderLosses++;
