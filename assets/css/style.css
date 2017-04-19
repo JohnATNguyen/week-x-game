@@ -64,6 +64,10 @@ span {
 	display: inline-block;
 }
 
+footer {
+	width: 101.2%;
+}
+
 footerish {
 	background-color: black;
 	color: green;

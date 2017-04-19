@@ -1,5 +1,7 @@
 // "* The `Health Points`, `Attack Power` and `Counter Attack Power` of each character must differ."
+// use more updated pictures???
 
+// set global variables, and functions
 var wins = 0;
 var losses = 0;
 
@@ -8,41 +10,39 @@ function randomNumber (min, max) {
 }
 
 function main() {
-	// set variables
+	// set local variables
 	var people = [
 		turtles = {
 			id: "turtles",
 			nameAndAlt: "One of the Turtles",
 			imageLink: "assets/images/Teenage_Mutant_Ninja_Turtles_(Kevin_Eastman's_art).jpg",
 			hitPoints: randomNumber(1, 201),
-			attackPower: randomNumber(1, 6)
+			attackPoints: randomNumber(1, 6)
 		},
 		splinter = {
 			id: "splinter",
 			nameAndAlt: "Master Splinter",
 			imageLink: "assets/images/Splinter_(David_Petersen's_art).jpg",
 			hitPoints: randomNumber(1, 151),
-			attackPower: randomNumber(1, 16)
+			attackPoints: randomNumber(1, 16)
 		},
 		april = {
 			id: "april",
 			nameAndAlt: "April O'Neil",
 			imageLink: "assets/images/April_O'Neil_(character).jpg",
 			hitPoints: randomNumber(1, 176),
-			attackPower: randomNumber(1, 11)
+			attackPoints: randomNumber(1, 11)
 		},
 		shredder = {
 			id: "shredder",
 			nameAndAlt: "The Shredder",
 			imageLink: "assets/images/TMNTShredderComic.jpg",
 			hitPoints: randomNumber(1, 126),
-			attackPower: randomNumber(1, 21)
+			attackPoints: randomNumber(1, 21)
 		}
 	]
-	for (var i = 0, n = people.length; i < n; i++) {
-		console.log([i] + ': ' + people[i].attackPower);
-	}
-	var characterBootstrapClass = "characts col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-3";
+	var preSelectBootstrapClass = "characts col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-3"
+	var postSelectBootstrapClass = "characts col-xl-9 col-lg-9 col-md-9 col-sm-9 col-xs-9";
 	var canPickAttacker = true;
 	var canPickDefender = true;
 	var canAttackDefender = true;
@@ -51,35 +51,39 @@ function main() {
 
 	var cowabunga = new Audio('assets/tmnt-turtles-in-time-ost-cowabunga.mp3');
 
+	//disable attack button (to be enabled later), so that it doesn't double up with each restart
 	$('#attack').prop('disabled', true);
 
-	// create, addClass, html, and append div's for each of the characters and put Notes: select a character
+	// set up initial state
 	$('#selectcharacter').html('<h3><em>Players to Select:</em></h3>');
 
 	for (var i = 0, n = people.length; i < n; i++) {
-		$('#selectcharacter').append('<div ' + 'id="' + people[i].id + '" class="characts col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-3" hitpoints="' + people[i].hitPoints + '" attackpower="' + people[i].attackPower + '"><p>' + people[i].nameAndAlt + '</p><img src="' + people[i].imageLink + '" alt="' + people[i].nameAndAlt + '"><p class="HP">HP (Hit Points): ' + people[i].hitPoints + '</p></div>');
+		$('#selectcharacter').append('<div ' + 'id="' + people[i].id + '" class="' + preSelectBootstrapClass + '" hitpoints="' + people[i].hitPoints + '" attackPoints="' + people[i].attackPoints + '"><p>' + people[i].nameAndAlt + '</p><p><img src="' + people[i].imageLink + '" alt="' + people[i].nameAndAlt + '"></p><p class="HP">HP (Hit Points): ' + people[i].hitPoints + '</p><p class="AP">AP (Attack Points): ' + people[i].attackPoints + '</p></div>');
 	}
 
-	$('#currentcharacter').html('<h3><em>Current Attacker:</em></h3>');
+	$('#currentattacker').html('<h3><em>Current Attacker:</em></h3>');
 	$('#currentdefender').html('<h3><em>Current Defender:</em></h3>');
 	$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>Please select an attacker.</span>');
 	$('#winscolumn').html(wins);
 	$('#lossescolumn').html(losses);
 
-	$('.characts').unbind('click');
 	// user clicks a character
 	$('.characts').on('click', function() {
 		if (canPickAttacker) {
 			var attackerDiv = $(this);
-			attackerDiv.addClass('attacker');
-			$('#currentcharacter').append(attackerDiv);
+			attackerDiv.removeClass(preSelectBootstrapClass).addClass('attacker ' + postSelectBootstrapClass);
+			$('#currentattacker').append(attackerDiv);
 			canPickAttacker = false;
 			attackerId = $(this).attr('id')
 			$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>Please select a defender.</span>');
 		}
 		else if (canPickDefender && $(this).attr('id') != attackerId) {
+			// add this stuff to remove "Select Character:" after the last character is selected???
+			// if (defenderLosses == people.length - 2) {
+			// 	$('#selectcharacter').empty();
+			// }
 			var defenderDiv = $(this);
-			defenderDiv.addClass('defender');
+			defenderDiv.removeClass(preSelectBootstrapClass).addClass('defender ' + postSelectBootstrapClass);
 			$('#currentdefender').append(defenderDiv);
 			canPickDefender = false;
 			$('#attack').prop('disabled', false);
@@ -87,42 +91,55 @@ function main() {
 		}
 	});
 
+	// unbind attack button so that it doesn't double up with each restart
 	$('#attack').unbind('click');
+
+	// user clicks attack button
 	$('#attack').on('click', function() {
-		var attackerTotalAttack = parseInt($('.attacker').attr('attackPower')) + parseInt($('.attacker').attr('attackPower')*attackCounter);
+		var attackerTotalAttack = parseInt($('.attacker').attr('attackPoints')) + parseInt($('.attacker').attr('attackPoints')*attackCounter);
 		var defenderHitPoints = $('.defender').attr('hitpoints') - attackerTotalAttack;
 		$('.defender').attr('hitpoints', defenderHitPoints);
 		$('.defender').find('.HP').html('HP (Hit Points): ' + defenderHitPoints);
 		attackCounter++;
-		var defenderTotalAttack = $('.defender').attr('attackPower'); // coming out as a string sometimes after restart, so undefined happens???
-		console.log(defenderTotalAttack);
-		var attackerHitPoints = $('.attacker').attr('hitpoints') - defenderTotalAttack; // defenderTotalAttack comes out as string at times after restart (right above), so attackerHitPoints (being a mathematical operation) comes out as NaN???
-		console.log(attackerHitPoints);
+		var attackerTotalAttackDisplay = parseInt($('.attacker').attr('attackPoints')) + parseInt($('.attacker').attr('attackPoints')*attackCounter);
+		$('.attacker').find('.AP').html('AP (Attack Points): ' + attackerTotalAttackDisplay);
+		var defenderTotalAttack = $('.defender').attr('attackPoints');
+		var attackerHitPoints = $('.attacker').attr('hitpoints') - defenderTotalAttack;
 		$('.attacker').attr('hitpoints', attackerHitPoints);
 		$('.attacker').find('.HP').html('HP (Hit Points): ' + attackerHitPoints);
 		$('#gameupdates').html('<h3><em>Game Updates: </em></h3>');
 		$('#gameupdates').append('<span>You attacked the defender for ' + attackerTotalAttack + ' hitpoints!<br></span>');
 		$('#gameupdates').append('<span>The defender counterattacked you for ' + defenderTotalAttack + ' hitpoints!</span>');
-		if (attackerHitPoints <= 0) {
-			losses++;
-			$('#attack').prop('disabled', true);
-			$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>You\'ve lost!</span>');
-			$('#lossescolumn').html(losses);
-		}
-		else if (defenderHitPoints <= 0) {
+		if (defenderHitPoints <= 0) {
 			$('#currentdefender').html('<h3><em>Current Defender:</em></h3>');
 			canPickDefender = true;
 			defenderLosses++;
+			if (attackerHitPoints <= 0) {
+				$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>You beat your last defender, but you also died!</span>');
+				losses++;
+				return;
+			}
 			if (defenderLosses == people.length - 1) {
 				wins++;
 				$('#attack').prop('disabled', true);
 				$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>You\'ve won!</span>');
 				$('#winscolumn').html(wins);
 				cowabunga.play();
+				if (attackerHitPoints <= 0) {
+					$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>You beat your last defender, but you also died!</span>');
+					wins--;
+					return;
+				}
 				return;
 			}
 			$('#attack').prop('disabled', true);
 			$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>Please select another defender.</span>');
+		}
+		else if (attackerHitPoints <= 0) {
+			losses++;
+			$('#attack').prop('disabled', true);
+			$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>You\'ve lost!</span>');
+			$('#lossescolumn').html(losses);
 		}
 	});
 }
