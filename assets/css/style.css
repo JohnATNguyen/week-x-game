@@ -22,6 +22,11 @@ a:hover {
 	text-decoration: none;
 }
 
+a:focus {
+	color: yellow;
+	text-decoration: none;
+}
+
 .leftside {
 	text-align: center;
 }

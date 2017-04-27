@@ -58,7 +58,7 @@ function main() {
 	$('#selectcharacter').html('<h3><em>Players to Select:</em></h3>');
 
 	for (var i = 0, n = people.length; i < n; i++) {
-		$('#selectcharacter').append('<div ' + 'id="' + people[i].id + '" class="' + preSelectBootstrapClass + '" hitpoints="' + people[i].hitPoints + '" attackPoints="' + people[i].attackPoints + '"><p>' + people[i].nameAndAlt + '</p><p><img src="' + people[i].imageLink + '" alt="' + people[i].nameAndAlt + '"></p><p class="HP">HP (Hit Points): ' + people[i].hitPoints + '</p><p class="AP">AP (Attack Points): ' + people[i].attackPoints + '</p></div>');
+		$('#selectcharacter').append('<div id="' + people[i].id + '" class="' + preSelectBootstrapClass + '" hitpoints="' + people[i].hitPoints + '" attackPoints="' + people[i].attackPoints + '"><p>' + people[i].nameAndAlt + '</p><p><img src="' + people[i].imageLink + '" alt="' + people[i].nameAndAlt + '"></p><p class="HP">HP (Hit Points): ' + people[i].hitPoints + '</p><p class="AP">AP (Attack Points): ' + people[i].attackPoints + '</p></div>');
 	}
 
 	$('#currentattacker').html('<h3><em>Current Attacker:</em></h3>');
@@ -111,29 +111,32 @@ function main() {
 		$('#gameupdates').append('<span>You attacked the defender for ' + attackerTotalAttack + ' hitpoints!<br></span>');
 		$('#gameupdates').append('<span>The defender counterattacked you for ' + defenderTotalAttack + ' hitpoints!</span>');
 		if (defenderHitPoints <= 0) {
-			$('#currentdefender').html('<h3><em>Current Defender:</em></h3>');
-			canPickDefender = true;
 			defenderLosses++;
-			if (attackerHitPoints <= 0) {
-				$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>You beat your last defender, but you also died!</span>');
-				losses++;
-				return;
-			}
 			if (defenderLosses == people.length - 1) {
-				wins++;
-				$('#attack').prop('disabled', true);
-				$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>You\'ve won!</span>');
-				$('#winscolumn').html(wins);
-				cowabunga.play();
 				if (attackerHitPoints <= 0) {
-					$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>You beat your last defender, but you also died!</span>');
-					wins--;
-					return;
+					$('#attack').prop('disabled', true);
+					$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>You beat the last defender, but you also died! It\'s a draw!</span>');
 				}
-				return;
+				else {
+					wins++;
+					$('#attack').prop('disabled', true);
+					$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>You\'ve won!</span>');
+					$('#winscolumn').html(wins);
+					cowabunga.play();
+				}
 			}
-			$('#attack').prop('disabled', true);
-			$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>Please select another defender.</span>');
+			else if (attackerHitPoints <= 0) {
+				losses++;
+				$('#attack').prop('disabled', true);
+				$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>You beat your last defender, but you also died!</span>');
+				$('#lossescolumn').html(losses);
+			}
+			else {
+				$('#currentdefender').html('<h3><em>Current Defender:</em></h3>');
+				$('#attack').prop('disabled', true);
+				$('#gameupdates').html('<h3><em>Game Updates: </em></h3><span>Please select another defender.</span>');
+				canPickDefender = true;
+			}
 		}
 		else if (attackerHitPoints <= 0) {
 			losses++;
